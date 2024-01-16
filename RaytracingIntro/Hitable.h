@@ -2,6 +2,8 @@
 #include "Ray.h"
 #include "Interval.h"
 
+class Material;
+
 class HitInfo
 {
 public:
@@ -9,6 +11,7 @@ public:
     Vector3 normal;
     double time;
     bool frontFace;
+    shared_ptr<Material> mat;
 
     void SetFaceNormal(const Ray& rRay, const Vector3& outwardNormal)
     {

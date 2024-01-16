@@ -5,12 +5,16 @@
 //New Vector3 alias for color
 using Color = Vector3;
 
+inline double toGamma(double linear) {
+    return sqrt(linear);
+}
+
 inline void WriteColor(std::ostream& out, Color pixel, int sampleCount){
 
     double scale = 1.0 / sampleCount;
-    double r = pixel.x * scale;
-    double g = pixel.y * scale;
-    double b = pixel.z * scale;
+    double r = toGamma(pixel.x * scale);
+    double g = toGamma(pixel.y * scale);
+    double b = toGamma(pixel.z * scale);
 
     // Write the translated [0,255] value of each color component.
     static const Interval intensity(0.000, 0.999);

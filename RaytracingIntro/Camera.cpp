@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include <iostream>
 #include "Utility.h"
+#include "Material.h"
 
 using namespace std;
 
@@ -56,9 +57,15 @@ Color Camera::RayColor(const Ray& rRay, int bouncesLeft, const Hitable& rWorld) 
     HitInfo hitInfo;
     if (bouncesLeft <= 0) return Color(0, 0, 0);
     if (rWorld.Hit(rRay, Interval(0.001, infinity), hitInfo)) {
-        Vector3 direction = RandomOnHemisphere(hitInfo.normal);
-        return 0.5 * RayColor(Ray(hitInfo.coordinates, direction), bouncesLeft - 1, rWorld);
+        Ray scattered;
+        Color attenuation;
+        if (hitInfo.mat->Scatter(rRay, hitInfo, attenuation, scattered))
+        {
+            return attenuation * RayColor(scattered, bouncesLeft - 1, rWorld);
+        }
+        return Color(0, 0, 0);
     }
+
 
     Vector3 unitDirection = Unit(rRay.GetDirection());
     double blue = 0.5 * (unitDirection.y + 1.0);

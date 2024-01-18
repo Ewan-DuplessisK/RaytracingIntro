@@ -145,3 +145,11 @@ inline Vector3 Reflect(const Vector3& direction, const Vector3& normal){
 
     return direction - 2 * Dot(direction, normal) * normal;
 }
+
+inline Vector3 Refract(const Vector3& uv, const Vector3& n, double eta_ratio) {
+    auto cos_theta = fmin(Dot(-uv, n), 1.0);
+    Vector3 rPerpidicular = eta_ratio * (uv + cos_theta * n);
+    Vector3 rParralel = -sqrt(fabs(1.0 - rPerpidicular.SquaredLength())) * n;
+    return rPerpidicular + rParralel;
+}
+

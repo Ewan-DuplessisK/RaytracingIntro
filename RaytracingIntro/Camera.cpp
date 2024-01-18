@@ -31,21 +31,27 @@ void Camera::Initialize(){
     height = static_cast<int>(width / aspectRatio);
     if (height < 1) height = 1;
 
-    center = Position(0, 0, 0);
-    double focalLength = 1;
-    double viewportHeight = 2;
+    center = camPosition;
+    double focalLength = (camPosition-target).Length();
+    auto theta = DegToRad(vfov);
+    auto h = tan(theta / 2);
+    auto viewportHeight = 2 * h * focalLength;
+
     double viewportWidth = viewportHeight * (static_cast<double>(width) / height);
 
-    Vector3 viewportX = Vector3(viewportWidth, 0, 0);
-    Vector3 viewportY = Vector3(0, -viewportHeight, 0); //We invert Y
+    w = Unit(camPosition - target);
+    u = Unit(Cross(camUp, w));
+    v = Cross(w, u);
+
+    Vector3 viewportX = viewportWidth*u;
+    Vector3 viewportY = -viewportHeight*v; //We invert Y
 
     //Delta vector between pixels
     pixelDeltaX = viewportX / width;
     pixelDeltaY = viewportY / height;
 
     //Position of the top left pixel
-    Vector3 viewportOrigin = center - Vector3(0, 0, focalLength)
-        - viewportX / 2 - viewportY / 2;
+    Vector3 viewportOrigin = center - (focalLength * w) - viewportX / 2 - viewportY / 2;
 
     originPixelLocation = viewportOrigin + 0.5 * (pixelDeltaX + pixelDeltaY);
 

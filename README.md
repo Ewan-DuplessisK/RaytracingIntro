@@ -1,1 +1,1 @@
-![finalRender](https://github.com/Ewan-DuplessisK/RaytracingIntro/blob/master/finalSmall.ppm?raw=true)
+![finalRender](https://github.com/Ewan-DuplessisK/RaytracingIntro/blob/master/CaptureRaytracing.png?raw=true)

@@ -32,10 +32,10 @@ void Camera::Initialize(){
     if (height < 1) height = 1;
 
     center = camPosition;
-    double focalLength = (camPosition-target).Length();
+    //double focalLength = (camPosition-target).Length();
     auto theta = DegToRad(vfov);
     auto h = tan(theta / 2);
-    auto viewportHeight = 2 * h * focalLength;
+    auto viewportHeight = 2 * h * focusDist;
 
     double viewportWidth = viewportHeight * (static_cast<double>(width) / height);
 
@@ -51,9 +51,14 @@ void Camera::Initialize(){
     pixelDeltaY = viewportY / height;
 
     //Position of the top left pixel
-    Vector3 viewportOrigin = center - (focalLength * w) - viewportX / 2 - viewportY / 2;
+    Vector3 viewportOrigin = center - (focusDist * w) - viewportX / 2 - viewportY / 2;
 
     originPixelLocation = viewportOrigin + 0.5 * (pixelDeltaX + pixelDeltaY);
+
+    // Calculate the camera defocus disk basis vectors.
+    auto defocusRadius = focusDist * tan(DegToRad(defocusAngle / 2));
+    DefocusDiskX = u * defocusRadius;
+    DefocusDiskY = v * defocusRadius;
 
 }
 
@@ -85,7 +90,7 @@ Ray Camera::GetRay(int x, int y) const{
     Vector3 pixelCenter = originPixelLocation + (x * pixelDeltaX) + (y * pixelDeltaY);
     Vector3 pixelSample = pixelCenter + PixelSampleSquared();
 
-    Position rayOrigin = center;
+    Position rayOrigin = (defocusAngle <= 0) ? center : DefocusSample();
     Vector3 rayDirection = pixelSample - rayOrigin;
 
     return Ray(rayOrigin, rayDirection);
@@ -98,4 +103,10 @@ Vector3 Camera::PixelSampleSquared() const
     double pX = -0.5 + RandomDouble();
     double pY = -0.5 + RandomDouble();
     return (pX * pixelDeltaX) + (pY * pixelDeltaY);
+}
+
+Position Camera::DefocusSample() const{
+    // Returns a random point in the camera defocus disk.
+    auto p = RandomDisk();
+    return center + (p[0] * DefocusDiskX) + (p[1] * DefocusDiskY);
 }

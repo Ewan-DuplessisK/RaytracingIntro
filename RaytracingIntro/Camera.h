@@ -13,6 +13,8 @@ public:
 	Position camPosition = Position(0, 0, -1);
 	Position target = Position(0, 0, 0);
 	Vector3 camUp = Vector3(0, 1, 0);
+	double defocusAngle = 0;  // Variation angle of rays through each pixel
+	double focusDist = 10;    // Distance from camera lookfrom point to plane of perfect focus
 
 private:
 	int height;
@@ -21,11 +23,14 @@ private:
 	Position center, originPixelLocation;
 	Vector3 pixelDeltaX, pixelDeltaY;
 	Vector3 u, v, w;
+	Vector3 DefocusDiskX;  // Defocus disk horizontal radius
+	Vector3 DefocusDiskY;  // Defocus disk vertical radius
 
 
 	void Initialize();
 	Color RayColor(const Ray& rRay,int bouncesLeft, const Hitable& rWorld) const;
 	Ray GetRay(int x, int y) const;
 	Vector3 PixelSampleSquared() const;
+	Position DefocusSample() const;
 
 };

@@ -153,3 +153,10 @@ inline Vector3 Refract(const Vector3& uv, const Vector3& n, double eta_ratio) {
     return rPerpidicular + rParralel;
 }
 
+inline Vector3 RandomDisk() {
+    while (true) {
+        auto p = Vector3(RandomDouble(-1, 1), RandomDouble(-1, 1), 0);
+        if (p.SquaredLength() < 1)
+            return p;
+    }
+}
